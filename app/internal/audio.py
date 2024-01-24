@@ -1,4 +1,7 @@
 import re
+import pandas as pd
+from gtts import gTTS
+import os
 
 class AudioGeneration():
     def __init__(
@@ -49,11 +52,10 @@ class AudioGeneration():
                 start = i + 1
         return sentences
 
-        
-
     def __tts(
         self,
-        texts: list[str]
+        texts: list[str],
+        lang: str = "fr"
     ):
         """
         Generate an audio file for each text
@@ -61,8 +63,43 @@ class AudioGeneration():
         Parameters
         ----------
         texts: list[str]
+            List containing sentences for TTS.
+        lang: str
+            IETF language tag.
+
+        Returns
+        -------
+        audios: Pandas DataFrame
+            DataFrame containing sentences and corresponding audio
         """
-        pass
+        # Creating Pandas DataFrame
+        columns = ["sentence", "audio_abs_path"]
+        audios = pd.DataFrame(
+            columns=columns
+        )
+        # Generating TTS for each sentence
+        for i in range(len(texts)):
+            # Generating TTS and saving it
+            tts = gTTS(
+                text=texts[i],
+                lang=lang
+            )
+            folder_abs_path = os.path.abspath(
+                path=self.folder
+            )
+            filename = self.id + "_" + str(i) + ".mp3"
+            audio_abs_path = os.path.join(
+                folder_abs_path,
+                filename
+            )
+            tts.save(audio_abs_path)
+            # Adding sentence and file path to DataFrame
+            row = [
+                texts[i],
+                audio_abs_path
+            ]
+            audios.loc[len(audios)] = row
+        return audios
 
     def __concat_files(
         self
@@ -75,12 +112,13 @@ class AudioGeneration():
     def generation(
         self
     ):
-        self.__split_text()
+        sentences = self.__split_text()
+        df = self.__tts(sentences)
 
 if __name__ == "__main__":
     test = AudioGeneration(
         text="Ceci, enfin ce qu'il en reste, est une phrase! Je serais heureux que ça fonctionne.",
         id="testid",
-        folder="."
+        folder="fake"
     )
     test.generation()
