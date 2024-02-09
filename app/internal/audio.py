@@ -102,18 +102,44 @@ class AudioGeneration():
         return audios
 
     def __concat_files(
-        self
+        self,
+        audios: pd.DataFrame
     ):
         """
         Concatenate every audios from the same text.
+
+        Parameters
+        ----------
+        audios: pd.DataFrame
+            DataFrame containing sentences and corresponding audio
+
+        Returns
+        -------
+        audio_path: str
+            Path to the concatenated audio
         """
-        pass
+        # Getting folder absolute path
+        folder_abs_path = os.path.abspath(
+            path=self.folder
+        )
+        # Creating filename and file path
+        filename = str(self.id) + '.txt'
+        file_path = os.path.join(
+            folder_abs_path,
+            filename
+        )
+        # Generating text file containing audios paths
+        with open(file_path, 'w') as file:
+            file.write("# " + filename + "\n")
+            for index, row in audios.iterrows():
+                file.write("file '{}'\n".format(row["audio_abs_path"]))
 
     def generation(
         self
     ):
         sentences = self.__split_text()
         df = self.__tts(sentences)
+        self.__concat_files(df)
 
 if __name__ == "__main__":
     test = AudioGeneration(
