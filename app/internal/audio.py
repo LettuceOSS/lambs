@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 from gtts import gTTS
+import subprocess
 import os
 
 class AudioGeneration():
@@ -25,6 +26,8 @@ class AudioGeneration():
         self.text = text
         self.id = id
         self.folder = folder
+        if not os.path.exists(self.folder):
+            os.makedirs(self.folder)
 
     def __split_text(
         self,
@@ -133,6 +136,18 @@ class AudioGeneration():
             file.write("# " + filename + "\n")
             for index, row in audios.iterrows():
                 file.write("file '{}'\n".format(row["audio_abs_path"]))
+        # Concatenate all files in one
+        complete_audio_name = str(self.id) + ".mp3"
+        complete_audio_path = os.path.join(
+            folder_abs_path,
+            complete_audio_name
+        )
+        run = subprocess.run(
+            args=["ffmpeg", "-f", "concat", "-safe", "0", "-i", str(file_path), "-c", "copy", str(complete_audio_path)]
+        )
+        # Checking if everything went well
+        if run.returncode != 0:
+            raise Exception("Audio generation failed")
 
     def generation(
         self
