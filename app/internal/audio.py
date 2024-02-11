@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 from gtts import gTTS
+from zipfile import ZipFile
 import subprocess
 import os
 
@@ -17,11 +18,11 @@ class AudioGeneration():
         Parameters
         ----------
         text: str
-            Text on which audio will be generated.
+            Text on which audio will be generated
         id: str
-            Unique text identifier.
+            Unique text identifier
         folder: str
-            Absolute or relative folder's path where the audio files will be saved.
+            Absolute or relative folder's path where the audio files will be saved
         """
         self.text = text
         self.id = id
@@ -39,12 +40,12 @@ class AudioGeneration():
         Parameters
         ----------
         exceptions: list[str]
-            Char exceptions while splitting. Default values: [" ", "'"].
+            Char exceptions while splitting. Default values: [" ", "'"]
 
         Returns
         -------
         sentences: list[str]
-            List containing sentences from the original text.
+            List containing sentences from the original text
         """
         # Splitting text by using any Unicode non-alphanumeric chars
         sentences = []
@@ -66,9 +67,9 @@ class AudioGeneration():
         Parameters
         ----------
         texts: list[str]
-            List containing sentences for TTS.
+            List containing sentences for TTS
         lang: str
-            IETF language tag.
+            IETF language tag
 
         Returns
         -------
@@ -109,7 +110,7 @@ class AudioGeneration():
         audios: pd.DataFrame
     ):
         """
-        Concatenate every audios from the same text.
+        Concatenate every audios from the same text
 
         Parameters
         ----------
@@ -149,12 +150,59 @@ class AudioGeneration():
         if run.returncode != 0:
             raise Exception("Audio generation failed")
 
+    def __zipping(
+        self
+    ):
+        """
+        Zip all the files related to the text
+
+        Returns
+        -------
+        files_zipped: str
+            Absolute path the the zipped files
+        """
+        # Getting folder absolute path
+        folder_abs_path = os.path.abspath(
+            path=self.folder
+        )
+        # Getting files for the current text
+        files = os.listdir(
+            path=folder_abs_path
+        )
+        current_text_files = [os.path.join(folder_abs_path, file) for file in files if file.startswith(str(self.id))]
+        # Zipping these files
+        zip_path = os.path.join(folder_abs_path, str(self.id) + ".zip")
+        with ZipFile(zip_path, 'w') as zip_object:
+            for file in current_text_files:
+                zip_object.write(
+                    filename=file,
+                    arcname=os.path.basename(file)
+                )
+        # Removing not zipped files
+        for file in current_text_files:
+            os.remove(file)
+        return zip_path
+
     def generation(
         self
     ):
+        """
+        Generates all audios for the current text
+
+        Returns
+        -------
+        zip_file_path: str
+            Absolute path to the audios archive
+        """
+        # Splitting text into sentences
         sentences = self.__split_text()
+        # TTS for each sentence
         df = self.__tts(sentences)
+        # Creating audio file with all sentences
         self.__concat_files(df)
+        # Zipping all files related to the current text
+        zip_file_path = self.__zipping()
+        return zip_file_path
 
 if __name__ == "__main__":
     test = AudioGeneration(
