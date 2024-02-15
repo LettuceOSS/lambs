@@ -8,4 +8,6 @@ COPY . .
 # Importing and activating Python environment
 RUN conda init bash &&\
     conda env create -f environment.yml
-RUN conda activate lambs
+WORKDIR /app
+RUN chmod 777 run.sh
+ENTRYPOINT [ "./run.sh" ]
