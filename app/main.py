@@ -5,14 +5,18 @@ from internal.audio import AudioGeneration
 import hashlib
 import os
 
+
 # Global variables
 AUDIO_FOLDER = "generated"
+
 
 # Data Text Model
 class DataText(BaseModel):
     text: str
 
+
 app = FastAPI()
+
 
 @app.post("/audio/generate")
 def audio_generation(data: DataText):
@@ -23,7 +27,7 @@ def audio_generation(data: DataText):
     ----------
     data: DataText
         Body of the request containing required text
-    
+
     Returns
     -------
     uid:
@@ -39,9 +43,10 @@ def audio_generation(data: DataText):
         id=uid,
         folder=AUDIO_FOLDER
     )
-    archive_path = audio.generation()
+    audio.generation()
     # Return archive path
     return {"audio_id": uid}
+
 
 @app.get("/audio/{audio_id}")
 def audio_file(audio_id: str):
