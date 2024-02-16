@@ -1,9 +1,9 @@
-import re
 import pandas as pd
 from gtts import gTTS
 from zipfile import ZipFile
 import subprocess
 import os
+
 
 class AudioGeneration():
     def __init__(
@@ -22,7 +22,8 @@ class AudioGeneration():
         id: str
             Unique text identifier
         folder: str
-            Absolute or relative folder's path where the audio files will be saved
+            Absolute or relative folder's path where the audio files will be \
+            saved
         """
         self.text = text
         self.id = id
@@ -35,7 +36,8 @@ class AudioGeneration():
         exceptions: list[str] = [" ", "\'"]
     ):
         """
-        Dividing a text using punctuation (non-alphanumeric chars minus custom exceptions)
+        Dividing a text using punctuation (non-alphanumeric chars minus \
+        custom exceptions)
 
         Parameters
         ----------
@@ -51,7 +53,12 @@ class AudioGeneration():
         sentences = []
         start = 0
         for i in range(len(self.text)):
-            if (not self.text[i].isalnum() and self.text[i] not in exceptions) or i == len(self.text) - 1:
+            if (
+                (not self.text[i].isalnum() and
+                 self.text[i] not in exceptions) or
+                i == len(self.text) - 1
+            ):
+                # Splitting
                 sentences.append(self.text[start:i+1])
                 start = i + 1
         return sentences
@@ -144,7 +151,18 @@ class AudioGeneration():
             complete_audio_name
         )
         run = subprocess.run(
-            args=["ffmpeg", "-f", "concat", "-safe", "0", "-i", str(file_path), "-c", "copy", str(complete_audio_path)]
+            args=[
+                "ffmpeg",
+                "-f",
+                "concat",
+                "-safe",
+                "0",
+                "-i",
+                str(file_path),
+                "-c",
+                "copy",
+                str(complete_audio_path)
+            ]
         )
         # Checking if everything went well
         if run.returncode != 0:
@@ -169,7 +187,9 @@ class AudioGeneration():
         files = os.listdir(
             path=folder_abs_path
         )
-        current_text_files = [os.path.join(folder_abs_path, file) for file in files if file.startswith(str(self.id))]
+        current_text_files = [os.path.join(folder_abs_path, file)
+                              for file in files
+                              if file.startswith(str(self.id))]
         # Zipping these files
         zip_path = os.path.join(folder_abs_path, str(self.id) + ".zip")
         with ZipFile(zip_path, 'w') as zip_object:
@@ -204,9 +224,11 @@ class AudioGeneration():
         zip_file_path = self.__zipping()
         return zip_file_path
 
+
 if __name__ == "__main__":
     test = AudioGeneration(
-        text="Ceci, enfin ce qu'il en reste, est une phrase! Je serais heureux que ça fonctionne.",
+        text="Ceci, enfin ce qu'il en reste, est une phrase! Je serais \
+        heureux que ça fonctionne.",
         id="testid",
         folder="fake"
     )
