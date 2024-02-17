@@ -2,9 +2,11 @@ from app.internal.audio import AudioGeneration
 from zipfile import ZipFile
 import pytest
 
+
 test_folder = "test"
 text_1_path = "../../data/input_1.txt"
 text_2_path = "../../data/input_2.txt"
+
 
 def test_audio_generation_1():
     """
@@ -25,6 +27,7 @@ def test_audio_generation_1():
     with ZipFile(zip_path) as archive:
         count = len(archive.infolist())
     assert count == 6
+
 
 def test_audio_generation_2():
     """
@@ -48,4 +51,4 @@ def test_audio_generation_2():
 
 
 if __name__ == "__main__":
-	pytest.main()
+    pytest.main()
