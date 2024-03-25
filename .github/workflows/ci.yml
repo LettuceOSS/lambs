@@ -13,3 +13,7 @@ jobs:
         environment-file: environment.yml
     - name: Source
       run: flake8
+    - name: Build
+      run: |
+        cd tests/unit
+        pytest
