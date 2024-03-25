@@ -1,16 +1,15 @@
-name: Continious Integration
+name: Continuous Integration
 
 on: workflow_dispatch
 
 jobs:
-  build:
+  Continuous-Integration:
     runs-on: ubuntu-latest
-
     steps:
+    - uses: actions/checkout@v4
     - uses: conda-incubator/setup-miniconda@v3
       with:
         activate-environment: lambs
         environment-file: environment.yml
-    - name: Conda list
-      shell: bash
-      run: conda list
+    - name: Source
+      run: flake8
