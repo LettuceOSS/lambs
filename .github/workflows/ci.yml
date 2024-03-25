@@ -11,6 +11,7 @@ jobs:
       with:
         activate-environment: lambs
         environment-file: environment.yml
+        auto-activate-base: false
     - name: Source
       run: flake8
     - name: Build
