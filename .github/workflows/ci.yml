@@ -12,5 +12,5 @@ jobs:
         activate-environment: lambs
         environment-file: environment.yaml
     - name: Conda list
-        shell: bash
-        run: conda list
+      shell: bash
+      run: conda list
