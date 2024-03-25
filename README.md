@@ -14,3 +14,7 @@ Run docker container
 ```
 docker run --name lambs --rm -p 8080:80 lambs:test
 ```
+
+conda activate lambs
+cd ../tests
+pytest

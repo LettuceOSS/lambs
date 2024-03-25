@@ -1,0 +1,19 @@
+name: Continuous Integration
+
+on: workflow_dispatch
+
+jobs:
+  Continuous-Integration:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: lambs
+        environment-file: environment.yml
+    - name: Source
+      run: flake8
+    - name: Build
+      run: |
+        cd tests/unit
+        pytest
