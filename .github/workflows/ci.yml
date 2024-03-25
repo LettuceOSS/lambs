@@ -10,7 +10,7 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v3
       with:
         activate-environment: lambs
-        environment-file: environment.yaml
+        environment-file: environment.yml
     - name: Conda list
       shell: bash
       run: conda list
