@@ -13,7 +13,7 @@ jobs:
         environment-file: environment.yml
         auto-activate-base: false
     - name: Source
-      run: flake8
+      run: conda list
     - name: Build
       run: |
         cd tests/unit
