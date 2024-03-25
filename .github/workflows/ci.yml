@@ -13,7 +13,7 @@ jobs:
         environment-file: environment.yml
         auto-activate-base: false
     - name: Source
-      run: conda list
+      run: echo $CONDA_DEFAULT_ENV
     - name: Build
       run: |
         cd tests/unit
