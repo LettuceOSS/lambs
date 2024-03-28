@@ -10,5 +10,10 @@ jobs:
         shell: bash -el {0}
     steps:
     - uses: actions/checkout@v4
+    - name: Getting Git Commit ID
+      id: get_id
+      run: |
+        COMMIT_ID=$(git rev-parse HEAD)
+        echo "commit_id=$COMMIT_ID" >> "$GITHUB_OUTPUT"
     - name: Building Docker Image
-      run: docker build -t lambs:test .
+      run: docker build -t lambs:${{ steps.get_id.outputs.commit_id }} .
