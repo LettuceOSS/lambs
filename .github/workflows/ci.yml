@@ -51,6 +51,8 @@ jobs:
           COMMIT_ID=$(git rev-parse HEAD)
           echo "commit_id=$COMMIT_ID" >> "$GITHUB_OUTPUT"
       - name: Run container
-        run: docker run --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }}
+        run: docker run --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }} -d
+      - name: Run unit tests
+        run : docker exec -it lambs bash --login -c "cd ../tests/unit && conda activate lambs && pytest"
       - name: Stop container
         run: docker stop lambs
