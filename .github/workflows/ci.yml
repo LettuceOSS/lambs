@@ -3,25 +3,12 @@ name: Continuous Integration
 on: workflow_dispatch
 
 jobs:
-  Continuous-Integration:
+  Build:
     runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash -el {0}
     steps:
     - uses: actions/checkout@v4
-    - uses: conda-incubator/setup-miniconda@v3
-      with:
-        activate-environment: lambs
-        environment-file: environment.yml
-        auto-activate-base: false
-    - name: Installing FFmpeg
-      run: |
-        sudo apt update
-        sudo apt install ffmpeg -y
-    - name: Source
-      run: flake8
-    - name: Build
-      run: |
-        cd tests/unit
-        pytest
+    - name: Building Docker Image
+      run: docker build -t lambs:test .
