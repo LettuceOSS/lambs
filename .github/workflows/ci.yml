@@ -28,3 +28,28 @@ jobs:
       with:
         name: lambs
         path: /tmp/lambs.tar
+  Test:
+    needs: Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: lambs
+          path: /tmp
+      - name: Load image
+        run: |
+          docker load --input /tmp/lambs.tar
+          docker image ls -a
+      - name: Getting Git Commit ID
+        id: get_id
+        run: |
+          COMMIT_ID=$(git rev-parse HEAD)
+          echo "commit_id=$COMMIT_ID" >> "$GITHUB_OUTPUT"
+      - name: Run container
+        run: docker run --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }}
+      - name: Stop container
+        run: docker stop lambs
