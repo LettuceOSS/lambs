@@ -48,6 +48,7 @@ def test_audio_generation_2():
     with ZipFile(zip_path) as archive:
         count = len(archive.infolist())
     assert count == 4
+    assert 1 == 2
 
 
 if __name__ == "__main__":
