@@ -1,19 +1,88 @@
 name: Continuous Integration
 
-on: workflow_dispatch
+on:
+  pull_request:
+    branches:
+      - 'develop'
 
 jobs:
-  Continuous-Integration:
+  Build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
     - uses: actions/checkout@v4
-    - uses: conda-incubator/setup-miniconda@v3
-      with:
-        activate-environment: lambs
-        environment-file: environment.yml
-    - name: Source
-      run: flake8
-    - name: Build
+    - name: Getting Git Commit ID
+      id: get_id
       run: |
-        cd tests/unit
-        pytest
+        COMMIT_ID=$(git rev-parse HEAD)
+        echo "commit_id=$COMMIT_ID" >> "$GITHUB_OUTPUT"
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build and export
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        tags: lambs:${{ steps.get_id.outputs.commit_id }}
+        outputs: type=docker,dest=/tmp/lambs.tar
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lambs
+        path: /tmp/lambs.tar
+  Test:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lambs
+          path: /tmp
+      - name: Load image
+        run: |
+          docker load --input /tmp/lambs.tar
+          docker image ls -a
+      - name: Getting Git Commit ID
+        id: get_id
+        run: |
+          COMMIT_ID=$(git rev-parse HEAD)
+          echo "commit_id=$COMMIT_ID" >> "$GITHUB_OUTPUT"
+      - name: Run container
+        run: docker run -d --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }}
+      - name: Run unit tests
+        run : docker exec lambs bash --login -c "cd ../tests/unit && conda activate lambs && pytest"
+      - name: Run integration tests
+        run : docker exec lambs bash --login -c "cd ../tests/integration && conda activate lambs && pytest"
+      - name: Stop container
+        run: docker stop lambs
+  Quality:
+    needs: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lambs
+          path: /tmp
+      - name: Load image
+        run: |
+          docker load --input /tmp/lambs.tar
+          docker image ls -a
+      - name: Getting Git Commit ID
+        id: get_id
+        run: |
+          COMMIT_ID=$(git rev-parse HEAD)
+          echo "commit_id=$COMMIT_ID" >> "$GITHUB_OUTPUT"
+      - name: Run container
+        run: docker run -d --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }}
+      - name: Run Flake8
+        run : docker exec lambs bash --login -c "cd .. && conda activate lambs && flake8"
+      - name: Stop container
+        run: docker stop lambs
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+            name: lambs
