@@ -80,3 +80,6 @@ jobs:
         run : docker exec lambs bash --login -c "cd .. && conda activate lambs && flake8"
       - name: Stop container
         run: docker stop lambs
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+            name: lambs
