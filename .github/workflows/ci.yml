@@ -1,6 +1,9 @@
 name: Continuous Integration
 
-on: workflow_dispatch
+on:
+  pull_request:
+    branches:
+      - 'develop'
 
 jobs:
   Build:
