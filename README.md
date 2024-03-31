@@ -40,8 +40,9 @@ Go to http://localhost:8080/docs.
 ## Roadmap
 
 - [ ] Switching from Conda to PIP
-- [ ] Create a Continuous Delivery (CD) pipeline
+- [ ] Creating a Continuous Delivery (CD) pipeline
+- [ ] Adding support of foreign language
 - [ ] Option to get only concatenated audio
 - [ ] Adding code coverage to Continuous Integration (CI) pipeline
 - [ ] Adding option to save audios in S3
-- [ ] Add authentification system
+- [ ] Adding authentification system
