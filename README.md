@@ -41,8 +41,8 @@ Go to http://localhost:8080/docs.
 
 - [ ] Switching from Conda to PIP
 - [ ] Creating a Continuous Delivery (CD) pipeline
-- [ ] Adding support of foreign language
+- [ ] Adding support for foreign language
 - [ ] Option to get only concatenated audio
-- [ ] Adding code coverage to Continuous Integration (CI) pipeline
+- [ ] Adding code coverage in Continuous Integration (CI) pipeline
 - [ ] Adding option to save audios in S3
-- [ ] Adding authentification system
+- [ ] Adding authentication system
