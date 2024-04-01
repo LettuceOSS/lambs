@@ -53,9 +53,9 @@ jobs:
       - name: Run container
         run: docker run -d --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }}
       - name: Run unit tests
-        run : docker exec lambs bash -c "cd ../tests/unit && source ../venv/bin/activate && pytest"
+        run : docker exec lambs bash -c "cd ../tests/unit && source ../../venv/bin/activate && pytest"
       - name: Run integration tests
-        run : docker exec lambs bash -c "cd ../tests/integration && source ../venv/bin/activate && pytest"
+        run : docker exec lambs bash -c "cd ../tests/integration && source ../../venv/bin/activate && pytest"
       - name: Stop container
         run: docker stop lambs
   Quality:
@@ -80,7 +80,7 @@ jobs:
       - name: Run container
         run: docker run -d --name lambs --rm -p 8080:80 lambs:${{ steps.get_id.outputs.commit_id }}
       - name: Run Flake8
-        run : docker exec lambs bash -c "cd .. && source ../venv/bin/activate && flake8"
+        run : docker exec lambs bash -c "cd .. && source venv/bin/activate && flake8"
       - name: Stop container
         run: docker stop lambs
       - uses: geekyeggo/delete-artifact@v5
