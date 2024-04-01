@@ -1,2 +1,2 @@
 [flake8]
-exclude=data,docs
+exclude=data,docs,venv

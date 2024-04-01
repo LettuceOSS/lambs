@@ -39,7 +39,7 @@ Go to http://localhost:8080/docs.
 
 ## Roadmap
 
-- [ ] Switching from Conda to PIP
+- [x] Switching from Conda to PIP
 - [ ] Creating a Continuous Delivery (CD) pipeline
 - [ ] Adding support for foreign language
 - [ ] Option to get only concatenated audio
